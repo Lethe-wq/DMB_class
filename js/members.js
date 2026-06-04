@@ -181,6 +181,7 @@ var addModal = document.getElementById('addModal');
 var addForm = document.getElementById('addForm');
 var addMsg = document.getElementById('addMsg');
 var addCancel = document.getElementById('addCancel');
+var addReset = document.getElementById('addReset');
 
 addBtn.addEventListener('click', function () {
     addForm.reset();
@@ -221,6 +222,11 @@ addForm.addEventListener('submit', function (e) {
         addMsg.className = 'result-msg error';
         addMsg.textContent = '请求失败: ' + err.message;
     });
+});
+
+addReset.addEventListener('click', function () {
+    addForm.reset();
+    addMsg.style.display = 'none';
 });
 
 // 防止 XSS：转义 HTML 特殊字符

@@ -85,6 +85,50 @@
         </div>
     </div>
 
+    <!-- 添加用户弹窗 -->
+    <div id="addModal" class="modal-overlay">
+        <div class="modal-box">
+            <h2>添加用户</h2>
+            <form id="addForm">
+                <div class="form-group">
+                    <label>用户名：</label>
+                    <input type="text" name="username" id="addUsername" required>
+                </div>
+                <div class="form-group">
+                    <label>年龄：</label>
+                    <input type="number" name="age" id="addAge">
+                </div>
+                <div class="form-group">
+                    <label>性别：</label>
+                    <input type="radio" name="sex" value="男" id="addSexMale" checked> 男
+                    <input type="radio" name="sex" value="女" id="addSexFemale"> 女
+                </div>
+                <div class="form-group">
+                    <label>地址：</label>
+                    <input type="text" name="addr" id="addAddr">
+                </div>
+                <div class="form-group">
+                    <label>婚姻状况：</label>
+                    <input type="radio" name="married" value="已婚" id="addMarriedYes"> 已婚
+                    <input type="radio" name="married" value="未婚" id="addMarriedNo" checked> 未婚
+                </div>
+                <div class="form-group">
+                    <label>薪水：</label>
+                    <input type="number" step="0.01" name="salary" id="addSalary">
+                </div>
+                <div class="form-group">
+                    <label>备注：</label>
+                    <textarea name="remark" id="addRemark" rows="3"></textarea>
+                </div>
+                <div class="form-actions">
+                    <button type="submit">添加</button>
+                    <button type="button" id="addCancel">取消</button>
+                </div>
+                <div id="addMsg" class="result-msg"></div>
+            </form>
+        </div>
+    </div>
+
     <script src="js/members.js"></script>
 </body>
 </html>

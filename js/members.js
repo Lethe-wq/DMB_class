@@ -175,6 +175,54 @@ editForm.addEventListener('submit', function (e) {
     });
 });
 
+// ===== 添加用户弹窗逻辑 =====
+var addBtn = document.getElementById('addBtn');
+var addModal = document.getElementById('addModal');
+var addForm = document.getElementById('addForm');
+var addMsg = document.getElementById('addMsg');
+var addCancel = document.getElementById('addCancel');
+
+addBtn.addEventListener('click', function () {
+    addForm.reset();
+    addMsg.style.display = 'none';
+    addModal.style.display = 'flex';
+});
+
+addCancel.addEventListener('click', function () {
+    addModal.style.display = 'none';
+});
+
+addModal.addEventListener('click', function (e) {
+    if (e.target === addModal) {
+        addModal.style.display = 'none';
+    }
+});
+
+addForm.addEventListener('submit', function (e) {
+    e.preventDefault();
+
+    var formData = new FormData(addForm);
+
+    fetch('api/add.php', {
+        method: 'POST',
+        body: formData
+    })
+    .then(function (res) { return res.json(); })
+    .then(function (data) {
+        if (data.success) {
+            addModal.style.display = 'none';
+            loadMembers();
+        } else {
+            addMsg.className = 'result-msg error';
+            addMsg.textContent = data.message;
+        }
+    })
+    .catch(function (err) {
+        addMsg.className = 'result-msg error';
+        addMsg.textContent = '请求失败: ' + err.message;
+    });
+});
+
 // 防止 XSS：转义 HTML 特殊字符
 function escapeHtml(str) {
     if (str === null || str === undefined) return '';

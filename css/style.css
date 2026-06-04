@@ -170,6 +170,10 @@ h1 {
     text-decoration: underline;
 }
 
+#memberTable td:last-child {
+    white-space: nowrap;
+}
+
 /* 编辑弹窗 */
 .modal-overlay {
     display: none;

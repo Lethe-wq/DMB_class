@@ -43,7 +43,7 @@ function loadMembers() {
                     '<td>' + escapeHtml(user.married) + '</td>' +
                     '<td>' + escapeHtml(user.salary) + '</td>' +
                     '<td>' + escapeHtml(user.remark) + '</td>' +
-                    '<td style="text-align: center; white-space: nowrap;min-width: 120px;">' +
+                    '<td>' +
                         '<a href="javascript:void(0)" class="edit-link" data-id="' + escapeHtml(user.id) + '">编辑</a> | ' +
                         '<a href="javascript:void(0)" class="delete-link" data-id="' + escapeHtml(user.id) + '">删除</a>' +
                     '</td>';

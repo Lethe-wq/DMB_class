@@ -104,10 +104,6 @@
                     <input type="radio" name="sex" value="女" id="addSexFemale"> 女
                 </div>
                 <div class="form-group">
-                    <label>地址：</label>
-                    <input type="text" name="addr" id="addAddr">
-                </div>
-                <div class="form-group">
                     <label>婚姻状况：</label>
                     <input type="radio" name="married" value="已婚" id="addMarriedYes"> 已婚
                     <input type="radio" name="married" value="未婚" id="addMarriedNo" checked> 未婚
@@ -117,12 +113,17 @@
                     <input type="number" step="0.01" name="salary" id="addSalary">
                 </div>
                 <div class="form-group">
+                    <label>地址：</label>
+                    <input type="text" name="addr" id="addAddr">
+                </div>
+                <div class="form-group">
                     <label>备注：</label>
                     <textarea name="remark" id="addRemark" rows="3"></textarea>
                 </div>
                 <div class="form-actions">
-                    <button type="submit">添加</button>
+                    <button type="submit">添加用户</button>
                     <button type="button" id="addCancel">取消</button>
+                    <button type="button" id="addReset">重置</button>
                 </div>
                 <div id="addMsg" class="result-msg"></div>
             </form>

@@ -3,129 +3,206 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="清晰查看和管理会员资料">
     <title>会员列表</title>
     <link rel="stylesheet" href="css/style.css">
 </head>
-<body>
-    <div class="container">
-        <h1>会员列表</h1>
+<body class="page page-members">
+    <header class="site-header">
+        <a class="brand" href="index.html" aria-label="会员中心首页">
+            <span class="brand-mark" aria-hidden="true">M</span>
+            <span>会员中心</span>
+        </a>
+        <nav class="site-nav" aria-label="主要导航">
+            <a href="index.html">注册</a>
+            <a class="is-active" href="members.html" aria-current="page">会员列表</a>
+        </nav>
+    </header>
 
-        <div class="toolbar">
-            <button id="addBtn" type="button">+ 添加用户</button>
-        </div>
+    <main class="page-shell page-shell-wide">
+        <section class="members-hero" aria-labelledby="members-title">
+            <div>
+                <p class="eyebrow">MEMBER DIRECTORY</p>
+                <h1 id="members-title">每位会员，<br>一目了然。</h1>
+                <p class="hero-copy">集中查看、添加和更新会员资料，让日常管理保持清晰有序。</p>
+            </div>
+            <div class="toolbar">
+                <button id="addBtn" class="button button-primary" type="button">
+                    <span aria-hidden="true">＋</span>
+                    添加用户
+                </button>
+            </div>
+        </section>
 
-        <div id="loading">加载中...</div>
-        <div id="errorMsg" class="result-msg error"></div>
+        <section class="directory-card" aria-labelledby="directory-title">
+            <div class="directory-heading">
+                <div>
+                    <p class="section-kicker">资料目录</p>
+                    <h2 id="directory-title">会员列表</h2>
+                </div>
+                <a class="text-link" href="index.html">注册新会员 <span aria-hidden="true">→</span></a>
+            </div>
 
-        <table id="memberTable" border="1" width="100%" cellspacing="0" cellpadding="8">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>用户名</th>
-                    <th>年龄</th>
-                    <th>性别</th>
-                    <th>地址</th>
-                    <th>婚姻状况</th>
-                    <th>薪水</th>
-                    <th>备注</th>
-                    <th>操作</th>
-                </tr>
-            </thead>
-            <tbody id="memberBody">
-            </tbody>
-        </table>
+            <div id="loading" class="loading-state" role="status" aria-live="polite">
+                <span class="loading-dot" aria-hidden="true"></span>
+                正在载入会员资料
+            </div>
+            <div id="errorMsg" class="result-msg" role="alert"></div>
 
-        <div class="nav-link">
-            <a href="index.html">返回注册</a>
-        </div>
-    </div>
+            <div class="table-shell">
+                <table id="memberTable">
+                    <caption class="sr-only">会员资料列表</caption>
+                    <thead>
+                        <tr>
+                            <th scope="col">ID</th>
+                            <th scope="col">用户名</th>
+                            <th scope="col">年龄</th>
+                            <th scope="col">性别</th>
+                            <th scope="col">地址</th>
+                            <th scope="col">婚姻状况</th>
+                            <th scope="col">薪水</th>
+                            <th scope="col">备注</th>
+                            <th scope="col">操作</th>
+                        </tr>
+                    </thead>
+                    <tbody id="memberBody"></tbody>
+                </table>
+            </div>
+        </section>
+    </main>
 
-    <!-- 编辑弹窗 -->
-    <div id="editModal" class="modal-overlay">
+    <footer class="site-footer">
+        <p>会员中心 · 简洁地管理每一份资料</p>
+    </footer>
+
+    <div id="editModal" class="modal-overlay" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="editModalTitle">
         <div class="modal-box">
-            <h2>编辑会员</h2>
+            <div class="modal-heading">
+                <p class="section-kicker">更新资料</p>
+                <h2 id="editModalTitle">编辑会员</h2>
+                <p>修改后保存，列表将自动刷新。</p>
+            </div>
             <form id="editForm">
                 <input type="hidden" name="id" id="editId">
-                <div class="form-group">
-                    <label>用户名：</label>
-                    <input type="text" name="username" placeholder="请输入用户名" id="editUsername" required>
-                </div>
-                <div class="form-group">
-                    <label>年龄：</label>
-                    <input type="number" name="age" placeholder="请输入年龄" id="editAge">
-                </div>
-                <div class="form-group">
-                    <label>性别：</label>
-                    <input type="radio" name="sex" value="男" id="editSexMale"> 男
-                    <input type="radio" name="sex" value="女" id="editSexFemale"> 女
-                </div>
-                <div class="form-group">
-                    <label>地址：</label>
-                    <input type="text" name="addr" placeholder="请输入地址" id="editAddr">
-                </div>
-                <div class="form-group">
-                    <label>婚姻状况：</label>
-                    <input type="radio" name="married" value="已婚" id="editMarriedYes"> 已婚
-                    <input type="radio" name="married" value="未婚" id="editMarriedNo"> 未婚
-                </div>
-                <div class="form-group">
-                    <label>薪水：</label>
-                    <input type="number" step="0.01" name="salary" placeholder="请输入薪水" id="editSalary">
-                </div>
-                <div class="form-group">
-                    <label>备注：</label>
-                    <textarea name="remark" placeholder="请输入备注" id="editRemark" rows="3"></textarea>
+                <div class="modal-form-grid">
+                    <div class="form-group form-group-wide">
+                        <label for="editUsername">用户名</label>
+                        <input type="text" name="username" placeholder="请输入用户名" id="editUsername" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="editAge">年龄</label>
+                        <input type="number" name="age" placeholder="请输入年龄" id="editAge">
+                    </div>
+                    <div class="form-group">
+                        <span class="field-label">性别</span>
+                        <div class="choice-row">
+                            <label class="choice-chip">
+                                <input type="radio" name="sex" value="男" id="editSexMale">
+                                <span>男</span>
+                            </label>
+                            <label class="choice-chip">
+                                <input type="radio" name="sex" value="女" id="editSexFemale">
+                                <span>女</span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-group form-group-wide">
+                        <label for="editAddr">地址</label>
+                        <input type="text" name="addr" placeholder="请输入地址" id="editAddr">
+                    </div>
+                    <div class="form-group">
+                        <span class="field-label">婚姻状况</span>
+                        <div class="choice-row">
+                            <label class="choice-chip">
+                                <input type="radio" name="married" value="已婚" id="editMarriedYes">
+                                <span>已婚</span>
+                            </label>
+                            <label class="choice-chip">
+                                <input type="radio" name="married" value="未婚" id="editMarriedNo">
+                                <span>未婚</span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="editSalary">薪水</label>
+                        <input type="number" step="0.01" name="salary" placeholder="请输入薪水" id="editSalary">
+                    </div>
+                    <div class="form-group form-group-wide">
+                        <label for="editRemark">备注</label>
+                        <textarea name="remark" placeholder="请输入备注" id="editRemark" rows="3"></textarea>
+                    </div>
                 </div>
                 <div class="form-actions">
-                    <button type="submit">保存</button>
-                    <button type="button" id="editCancel">取消</button>
+                    <button class="button button-primary" type="submit">保存修改</button>
+                    <button class="button button-secondary" type="button" id="editCancel">取消</button>
                 </div>
-                <div id="editMsg" class="result-msg"></div>
+                <div id="editMsg" class="result-msg" role="status" aria-live="polite"></div>
             </form>
         </div>
     </div>
 
-    <!-- 添加用户弹窗 -->
-    <div id="addModal" class="modal-overlay">
+    <div id="addModal" class="modal-overlay" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="addModalTitle">
         <div class="modal-box">
-            <h2>添加用户</h2>
+            <div class="modal-heading">
+                <p class="section-kicker">新建资料</p>
+                <h2 id="addModalTitle">添加用户</h2>
+                <p>填写基本信息以建立新的会员记录。</p>
+            </div>
             <form id="addForm">
-                <div class="form-group">
-                    <label>用户名：</label>
-                    <input type="text" name="username" placeholder="请输入用户名" id="addUsername" required>
-                </div>
-                <div class="form-group">
-                    <label>年龄：</label>
-                    <input type="number" name="age" placeholder="请输入年龄" id="addAge">
-                </div>
-                <div class="form-group">
-                    <label>性别：</label>
-                    <input type="radio" name="sex" value="男" id="addSexMale" checked> 男
-                    <input type="radio" name="sex" value="女" id="addSexFemale"> 女
-                </div>
-                <div class="form-group">
-                    <label>婚姻状况：</label>
-                    <input type="radio" name="married" value="已婚" id="addMarriedYes"> 已婚
-                    <input type="radio" name="married" value="未婚" id="addMarriedNo" checked> 未婚
-                </div>
-                <div class="form-group">
-                    <label>薪水：</label>
-                    <input type="number" step="0.01" name="salary" placeholder="请输入薪水" id="addSalary">
-                </div>
-                <div class="form-group">
-                    <label>地址：</label>
-                    <input type="text" name="addr" placeholder="请输入地址" id="addAddr">
-                </div>
-                <div class="form-group">
-                    <label>备注：</label>
-                    <textarea name="remark" placeholder="请输入备注" id="addRemark" rows="3"></textarea>
+                <div class="modal-form-grid">
+                    <div class="form-group form-group-wide">
+                        <label for="addUsername">用户名</label>
+                        <input type="text" name="username" placeholder="请输入用户名" id="addUsername" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="addAge">年龄</label>
+                        <input type="number" name="age" placeholder="请输入年龄" id="addAge">
+                    </div>
+                    <div class="form-group">
+                        <span class="field-label">性别</span>
+                        <div class="choice-row">
+                            <label class="choice-chip">
+                                <input type="radio" name="sex" value="男" id="addSexMale" checked>
+                                <span>男</span>
+                            </label>
+                            <label class="choice-chip">
+                                <input type="radio" name="sex" value="女" id="addSexFemale">
+                                <span>女</span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <span class="field-label">婚姻状况</span>
+                        <div class="choice-row">
+                            <label class="choice-chip">
+                                <input type="radio" name="married" value="已婚" id="addMarriedYes">
+                                <span>已婚</span>
+                            </label>
+                            <label class="choice-chip">
+                                <input type="radio" name="married" value="未婚" id="addMarriedNo" checked>
+                                <span>未婚</span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="addSalary">薪水</label>
+                        <input type="number" step="0.01" name="salary" placeholder="请输入薪水" id="addSalary">
+                    </div>
+                    <div class="form-group form-group-wide">
+                        <label for="addAddr">地址</label>
+                        <input type="text" name="addr" placeholder="请输入地址" id="addAddr">
+                    </div>
+                    <div class="form-group form-group-wide">
+                        <label for="addRemark">备注</label>
+                        <textarea name="remark" placeholder="请输入备注" id="addRemark" rows="3"></textarea>
+                    </div>
                 </div>
                 <div class="form-actions">
-                    <button type="submit">添加用户</button>
-                    <button type="button" id="addCancel">取消</button>
-                    <button type="button" id="addReset">重置</button>
+                    <button class="button button-primary" type="submit">添加用户</button>
+                    <button class="button button-secondary" type="button" id="addCancel">取消</button>
+                    <button class="button button-tertiary" type="button" id="addReset">重置</button>
                 </div>
-                <div id="addMsg" class="result-msg"></div>
+                <div id="addMsg" class="result-msg" role="status" aria-live="polite"></div>
             </form>
         </div>
     </div>

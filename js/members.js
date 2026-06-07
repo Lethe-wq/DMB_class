@@ -1,11 +1,69 @@
-// 页面加载时获取会员列表
 var loading = document.getElementById('loading');
 var errorMsg = document.getElementById('errorMsg');
 var memberBody = document.getElementById('memberBody');
+var editModal = document.getElementById('editModal');
+var editForm = document.getElementById('editForm');
+var editMsg = document.getElementById('editMsg');
+var editCancel = document.getElementById('editCancel');
+var addBtn = document.getElementById('addBtn');
+var addModal = document.getElementById('addModal');
+var addForm = document.getElementById('addForm');
+var addMsg = document.getElementById('addMsg');
+var addCancel = document.getElementById('addCancel');
+var addReset = document.getElementById('addReset');
+var lastFocusedElement = null;
+
+function showMessage(element, type, message) {
+    element.className = 'result-msg ' + type;
+    element.textContent = message;
+}
+
+function clearMessage(element) {
+    element.className = 'result-msg';
+    element.textContent = '';
+}
+
+function renderEmptyState() {
+    var row = document.createElement('tr');
+    var td = document.createElement('td');
+
+    row.className = 'empty-row';
+    td.className = 'empty-cell';
+    td.colSpan = 9;
+    td.textContent = '暂无会员数据';
+    row.appendChild(td);
+    memberBody.appendChild(row);
+}
+
+function setModalVisibility(modal, isVisible, focusTarget) {
+    if (isVisible) {
+        lastFocusedElement = document.activeElement;
+        modal.setAttribute('aria-hidden', 'false');
+        document.body.classList.add('modal-open');
+
+        window.setTimeout(function () {
+            if (focusTarget) focusTarget.focus();
+        }, 0);
+        return;
+    }
+
+    modal.setAttribute('aria-hidden', 'true');
+
+    if (
+        editModal.getAttribute('aria-hidden') === 'true' &&
+        addModal.getAttribute('aria-hidden') === 'true'
+    ) {
+        document.body.classList.remove('modal-open');
+    }
+
+    if (lastFocusedElement && document.contains(lastFocusedElement)) {
+        lastFocusedElement.focus();
+    }
+}
 
 function loadMembers() {
-    loading.style.display = 'block';
-    errorMsg.style.display = 'none';
+    loading.style.display = 'flex';
+    clearMessage(errorMsg);
     memberBody.innerHTML = '';
 
     fetch('api/members.php')
@@ -14,20 +72,13 @@ function loadMembers() {
             loading.style.display = 'none';
 
             if (!data.success) {
-                errorMsg.textContent = data.message || '获取数据失败';
-                errorMsg.style.display = 'block';
+                showMessage(errorMsg, 'error', data.message || '获取数据失败');
                 return;
             }
 
             var list = data.data;
             if (list.length === 0) {
-                var row = document.createElement('tr');
-                var td = document.createElement('td');
-                td.colSpan = 9;
-                td.textContent = '暂无会员数据';
-                td.style.textAlign = 'center';
-                row.appendChild(td);
-                memberBody.appendChild(row);
+                renderEmptyState();
                 return;
             }
 
@@ -35,46 +86,41 @@ function loadMembers() {
                 var row = document.createElement('tr');
                 row.setAttribute('data-id', user.id);
                 row.innerHTML =
-                    '<td>' + escapeHtml(user.id) + '</td>' +
-                    '<td>' + escapeHtml(user.username) + '</td>' +
-                    '<td>' + escapeHtml(user.age) + '</td>' +
-                    '<td>' + escapeHtml(user.sex) + '</td>' +
-                    '<td>' + escapeHtml(user.addr) + '</td>' +
-                    '<td>' + escapeHtml(user.married) + '</td>' +
-                    '<td>' + escapeHtml(user.salary) + '</td>' +
-                    '<td>' + escapeHtml(user.remark) + '</td>' +
-                    '<td>' +
-                        '<a href="javascript:void(0)" class="edit-link" data-id="' + escapeHtml(user.id) + '">编辑</a> | ' +
-                        '<a href="javascript:void(0)" class="delete-link" data-id="' + escapeHtml(user.id) + '">删除</a>' +
+                    '<td data-label="ID">' + escapeHtml(user.id) + '</td>' +
+                    '<td data-label="用户名">' + escapeHtml(user.username) + '</td>' +
+                    '<td data-label="年龄">' + escapeHtml(user.age) + '</td>' +
+                    '<td data-label="性别">' + escapeHtml(user.sex) + '</td>' +
+                    '<td data-label="地址">' + escapeHtml(user.addr) + '</td>' +
+                    '<td data-label="婚姻状况">' + escapeHtml(user.married) + '</td>' +
+                    '<td data-label="薪水">' + escapeHtml(user.salary) + '</td>' +
+                    '<td data-label="备注">' + escapeHtml(user.remark) + '</td>' +
+                    '<td data-label="操作">' +
+                        '<button type="button" class="edit-link" data-id="' + escapeHtml(user.id) + '">编辑</button>' +
+                        '<button type="button" class="delete-link" data-id="' + escapeHtml(user.id) + '">删除</button>' +
                     '</td>';
                 memberBody.appendChild(row);
             });
         })
         .catch(function (err) {
             loading.style.display = 'none';
-            errorMsg.textContent = '请求失败: ' + err.message;
-            errorMsg.style.display = 'block';
+            showMessage(errorMsg, 'error', '请求失败: ' + err.message);
         });
 }
 
-// 初始加载
-loadMembers();
-
-// 删除 & 编辑（事件委托）
 memberBody.addEventListener('click', function (e) {
     var target = e.target;
 
-    // 删除
     if (target.classList.contains('delete-link')) {
-        var id = target.getAttribute('data-id');
+        var deleteId = target.getAttribute('data-id');
         if (!confirm('确定要删除该会员吗？')) return;
 
-        fetch('api/delete.php?id=' + encodeURIComponent(id))
+        fetch('api/delete.php?id=' + encodeURIComponent(deleteId))
             .then(function (res) { return res.json(); })
             .then(function (data) {
                 if (data.success) {
                     var row = target.closest('tr');
                     row.parentNode.removeChild(row);
+                    if (memberBody.children.length === 0) renderEmptyState();
                 } else {
                     alert(data.message || '删除失败');
                 }
@@ -84,23 +130,15 @@ memberBody.addEventListener('click', function (e) {
             });
     }
 
-    // 编辑
     if (target.classList.contains('edit-link')) {
-        var id = target.getAttribute('data-id');
-        openEditModal(id);
+        var editId = target.getAttribute('data-id');
+        openEditModal(editId);
     }
 });
 
-// ===== 编辑弹窗逻辑 =====
-var editModal = document.getElementById('editModal');
-var editForm = document.getElementById('editForm');
-var editMsg = document.getElementById('editMsg');
-var editCancel = document.getElementById('editCancel');
-
 function openEditModal(id) {
-    editMsg.style.display = 'none';
+    clearMessage(editMsg);
 
-    // 先获取用户数据填充表单
     fetch('api/edit.php?id=' + encodeURIComponent(id))
         .then(function (res) { return res.json(); })
         .then(function (data) {
@@ -108,6 +146,7 @@ function openEditModal(id) {
                 alert(data.message || '获取用户信息失败');
                 return;
             }
+
             var user = data.data;
             document.getElementById('editId').value = user.id;
             document.getElementById('editUsername').value = user.username || '';
@@ -116,40 +155,35 @@ function openEditModal(id) {
             document.getElementById('editSalary').value = user.salary || '';
             document.getElementById('editRemark').value = user.remark || '';
 
-            // 性别单选
             if (user.sex === '女') {
                 document.getElementById('editSexFemale').checked = true;
             } else {
                 document.getElementById('editSexMale').checked = true;
             }
 
-            // 婚姻状况单选
             if (user.married === '已婚') {
                 document.getElementById('editMarriedYes').checked = true;
             } else {
                 document.getElementById('editMarriedNo').checked = true;
             }
 
-            editModal.style.display = 'flex';
+            setModalVisibility(editModal, true, document.getElementById('editUsername'));
         })
         .catch(function (err) {
             alert('请求失败: ' + err.message);
         });
 }
 
-// 取消关闭弹窗
 editCancel.addEventListener('click', function () {
-    editModal.style.display = 'none';
+    setModalVisibility(editModal, false);
 });
 
-// 点击遮罩层关闭
 editModal.addEventListener('click', function (e) {
     if (e.target === editModal) {
-        editModal.style.display = 'none';
+        setModalVisibility(editModal, false);
     }
 });
 
-// 提交编辑
 editForm.addEventListener('submit', function (e) {
     e.preventDefault();
 
@@ -162,40 +196,30 @@ editForm.addEventListener('submit', function (e) {
     .then(function (res) { return res.json(); })
     .then(function (data) {
         if (data.success) {
-            editModal.style.display = 'none';
-            loadMembers(); // 刷新列表
+            setModalVisibility(editModal, false);
+            loadMembers();
         } else {
-            editMsg.className = 'result-msg error';
-            editMsg.textContent = data.message;
+            showMessage(editMsg, 'error', data.message);
         }
     })
     .catch(function (err) {
-        editMsg.className = 'result-msg error';
-        editMsg.textContent = '请求失败: ' + err.message;
+        showMessage(editMsg, 'error', '请求失败: ' + err.message);
     });
 });
 
-// ===== 添加用户弹窗逻辑 =====
-var addBtn = document.getElementById('addBtn');
-var addModal = document.getElementById('addModal');
-var addForm = document.getElementById('addForm');
-var addMsg = document.getElementById('addMsg');
-var addCancel = document.getElementById('addCancel');
-var addReset = document.getElementById('addReset');
-
 addBtn.addEventListener('click', function () {
     addForm.reset();
-    addMsg.style.display = 'none';
-    addModal.style.display = 'flex';
+    clearMessage(addMsg);
+    setModalVisibility(addModal, true, document.getElementById('addUsername'));
 });
 
 addCancel.addEventListener('click', function () {
-    addModal.style.display = 'none';
+    setModalVisibility(addModal, false);
 });
 
 addModal.addEventListener('click', function (e) {
     if (e.target === addModal) {
-        addModal.style.display = 'none';
+        setModalVisibility(addModal, false);
     }
 });
 
@@ -211,28 +235,38 @@ addForm.addEventListener('submit', function (e) {
     .then(function (res) { return res.json(); })
     .then(function (data) {
         if (data.success) {
-            addModal.style.display = 'none';
+            setModalVisibility(addModal, false);
             loadMembers();
         } else {
-            addMsg.className = 'result-msg error';
-            addMsg.textContent = data.message;
+            showMessage(addMsg, 'error', data.message);
         }
     })
     .catch(function (err) {
-        addMsg.className = 'result-msg error';
-        addMsg.textContent = '请求失败: ' + err.message;
+        showMessage(addMsg, 'error', '请求失败: ' + err.message);
     });
 });
 
 addReset.addEventListener('click', function () {
     addForm.reset();
-    addMsg.style.display = 'none';
+    clearMessage(addMsg);
+    document.getElementById('addUsername').focus();
 });
 
-// 防止 XSS：转义 HTML 特殊字符
+document.addEventListener('keydown', function (e) {
+    if (e.key !== 'Escape') return;
+
+    if (editModal.getAttribute('aria-hidden') === 'false') {
+        setModalVisibility(editModal, false);
+    } else if (addModal.getAttribute('aria-hidden') === 'false') {
+        setModalVisibility(addModal, false);
+    }
+});
+
 function escapeHtml(str) {
     if (str === null || str === undefined) return '';
     var div = document.createElement('div');
     div.appendChild(document.createTextNode(String(str)));
     return div.innerHTML;
 }
+
+loadMembers();

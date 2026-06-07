@@ -61,6 +61,10 @@ function setModalVisibility(modal, isVisible, focusTarget) {
     }
 }
 
+function formatMarried(value) {
+    return String(value) === '1' ? '已婚' : '未婚';
+}
+
 function loadMembers() {
     loading.style.display = 'flex';
     clearMessage(errorMsg);
@@ -91,7 +95,7 @@ function loadMembers() {
                     '<td data-label="年龄">' + escapeHtml(user.age) + '</td>' +
                     '<td data-label="性别">' + escapeHtml(user.sex) + '</td>' +
                     '<td data-label="地址">' + escapeHtml(user.addr) + '</td>' +
-                    '<td data-label="婚姻状况">' + escapeHtml(user.married) + '</td>' +
+                    '<td data-label="婚姻状况">' + formatMarried(user.married) + '</td>' +
                     '<td data-label="薪水">' + escapeHtml(user.salary) + '</td>' +
                     '<td data-label="备注">' + escapeHtml(user.remark) + '</td>' +
                     '<td data-label="操作">' +
@@ -161,7 +165,7 @@ function openEditModal(id) {
                 document.getElementById('editSexMale').checked = true;
             }
 
-            if (user.married === '已婚') {
+            if (user.married === 1) {
                 document.getElementById('editMarriedYes').checked = true;
             } else {
                 document.getElementById('editMarriedNo').checked = true;

@@ -50,6 +50,14 @@ test('member page exposes accessible status and modal structure', () => {
     assert.match(html, /id="addModal"[^>]*role="dialog"[^>]*aria-modal="true"/);
 });
 
+test('member add modal keeps the password field required by the backend', () => {
+    const html = read('members.html');
+
+    assert.match(html, /id="addPsw"/);
+    assert.match(html, /name="psw"/);
+    assert.match(html, /id="addPsw"[^>]*required/);
+});
+
 test('member renderer adds mobile labels while preserving HTML escaping', () => {
     const js = read('js/members.js');
 

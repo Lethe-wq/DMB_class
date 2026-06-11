@@ -12,15 +12,15 @@ require_once __DIR__ . '/config.php';
 
 // 接收表单数据
 $username = $_POST['username'] ?? '';
-$psw      = $_POST['psw'] ?? '';
-$repsw    = $_POST['repsw'] ?? '';
-$gender   = $_POST['gender'] ?? '';
-$hobby    = $_POST['hobby'] ?? [];
-$year     = $_POST['year'] ?? '';
-$month    = $_POST['month'] ?? '';
-$day      = $_POST['day'] ?? '';
-$avatar   = $_POST['avatar'] ?? '';
-$message  = $_POST['message'] ?? '';
+$psw = $_POST['psw'] ?? '';
+$repsw = $_POST['repsw'] ?? '';
+$gender = $_POST['gender'] ?? '';
+$hobby = $_POST['hobby'] ?? [];
+$year = $_POST['year'] ?? '';
+$month = $_POST['month'] ?? '';
+$day = $_POST['day'] ?? '';
+$avatar = $_POST['avatar'] ?? '';
+$message = $_POST['message'] ?? '';
 
 // 输入验证
 if (empty($username) || empty($psw)) {
@@ -40,10 +40,10 @@ $genderText = $gender === '1' ? '男' : '女';
 
 // 使用 prepared statement 防止 SQL 注入
 $stmt = $conn->prepare(
-    "INSERT INTO user (username, sex, remark) VALUES (?, ?, ?)"
+    "INSERT INTO user (username, passWord, sex, remark) VALUES (?, ?, ?, ?)"
 );
 $remark = "生日:{$year}-{$month}-{$day} 爱好:{$hobbyStr} 头像:{$avatar} 留言:{$message}";
-$stmt->bind_param('sss', $username, $genderText, $remark);
+$stmt->bind_param('ssss', $username, $psw, $genderText, $remark);
 
 try {
     $stmt->execute();

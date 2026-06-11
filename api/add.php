@@ -10,21 +10,22 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 require_once __DIR__ . '/config.php';
 
 $username = $_POST['username'] ?? '';
-$age      = $_POST['age'] ?? '';
-$sex      = $_POST['sex'] ?? '';
-$addr     = $_POST['addr'] ?? '';
-$married  = $_POST['married'] ?? '';
-$salary   = $_POST['salary'] ?? '';
-$remark   = $_POST['remark'] ?? '';
+$password = $_POST['passWord'] ?? '';
+$age = $_POST['age'] ?? '';
+$sex = $_POST['sex'] ?? '';
+$addr = $_POST['addr'] ?? '';
+$married = $_POST['married'] ?? '';
+$salary = $_POST['salary'] ?? '';
+$remark = $_POST['remark'] ?? '';
 
 if (empty($username)) {
     echo json_encode(['success' => false, 'message' => '用户名不能为空']);
     exit;
 }
 
-$stmt = $conn->prepare("INSERT INTO user (username, age, sex, addr, married, salary, remark) VALUES (?, ?, ?, ?, ?, ?, ?)");
-$stmt->bind_param('sisssds', $username, $age, $sex, $addr, $married, $salary, $remark);
-
+$stmt = $conn->prepare("INSERT INTO user (username, passWord, age, sex, addr, married, salary, remark) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+$stmt->bind_param('ssssisss', $username, $password, $age, $sex, $addr, $married, $salary, $remark);
+$stmt->execute();
 try {
     $stmt->execute();
     echo json_encode(['success' => true, 'message' => '添加成功']);

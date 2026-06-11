@@ -18,14 +18,19 @@ const avatarOptions = {
         className: 'avatar-3',
         label: '松',
         ariaLabel: '松石绿头像'
+    },
+    '4': {
+        className: 'avatar-4',
+        label: 'qwq',
+        ariaLabel: 'qwq头像'
     }
 };
-
+// 头像预览更新函数
 function updateAvatarPreview() {
     const option = avatarOptions[avatarSelect.value] || avatarOptions['1'];
 
     avatarImg.classList.add('is-changing');
-    avatarImg.classList.remove('avatar-1', 'avatar-2', 'avatar-3');
+    avatarImg.classList.remove('avatar-1', 'avatar-2', 'avatar-3', 'avatar-4');
     avatarImg.classList.add(option.className);
     avatarImg.querySelector('span').textContent = option.label;
     avatarImg.setAttribute('aria-label', option.ariaLabel);
@@ -37,9 +42,11 @@ function updateAvatarPreview() {
 
 avatarSelect.addEventListener('change', updateAvatarPreview);
 
+// 表单重置时更新头像预览
 form.addEventListener('reset', function () {
     window.setTimeout(updateAvatarPreview, 0);
 });
+
 
 form.addEventListener('submit', function (e) {
     e.preventDefault();
